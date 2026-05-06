@@ -4,7 +4,7 @@ import espn_api
 import espnsecrets
 from espn_api.football import League
 
-league = League(league_id=68054, year=2024, espn_s2=espnsecrets.espn_s2, swid=espnsecrets.swid)
+league = League(league_id=espnsecrets.league, year=2024, espn_s2=espnsecrets.espn_s2, swid=espnsecrets.swid)
 
 
 

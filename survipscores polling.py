@@ -15,7 +15,7 @@ import subprocess
 
 
 # ESPN League settings
-league = League(league_id=68054, year=2021, espn_s2=espnsecrets.espn_s2, swid=espnsecrets.swid)
+league = League(league_id=espnsecrets.league, year=2021, espn_s2=espnsecrets.espn_s2, swid=espnsecrets.swid)
 owners = espnsecrets.owners
 
 # Get current date and week of the season

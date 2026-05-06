@@ -14,7 +14,7 @@ weekneed = 13
 elims = np.array([11])
 
 #League settings mainly the year
-league = League(league_id=68054, year=2023, espn_s2=espnsecrets.espn_s2, swid=espnsecrets.swid)
+league = League(league_id=espnsecrets.league, year=2023, espn_s2=espnsecrets.espn_s2, swid=espnsecrets.swid)
 
 ######
 

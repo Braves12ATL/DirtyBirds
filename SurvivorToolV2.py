@@ -50,7 +50,7 @@ else:
 weekneed = int(playnum) + int(1)
 
 #League settings mainly the year
-league = League(league_id=68054, year=int(season), espn_s2=espnsecrets.espn_s2, swid=espnsecrets.swid)
+league = League(league_id=espnsecrets.league, year=int(season), espn_s2=espnsecrets.espn_s2, swid=espnsecrets.swid)
 
 ######
 
