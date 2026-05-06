@@ -1,12 +1,11 @@
 import streamlit as st
 import pandas as pd
 from espn_api.football import League
-import espnsecrets
 
-LEAGUE_ID = espnsecrets.league
-S2 = espnsecrets.espn_s2
-SWID = espnsecrets.swid
-OWNERS = espnsecrets.owners
+LEAGUE_ID = st.secrets["league"]
+S2 = st.secrets["espn_s2"]
+SWID = st.secrets["swid"]
+OWNERS = list(st.secrets["owners"])
 
 YEARS = range(2012, 2026)
 

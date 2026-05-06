@@ -5,3 +5,4 @@ __pycache__/
 all_scores.txt
 *.csv
 .DS_Store
+.streamlit/secrets.toml
