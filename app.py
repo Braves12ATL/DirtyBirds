@@ -70,6 +70,37 @@ def load_all_scores() -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
 
 
+@st.cache_data(show_spinner="Loading Hall of Fame data...")
+def load_hof_data() -> pd.DataFrame:
+    rows = []
+    for year in YEARS:
+        try:
+            league = League(league_id=LEAGUE_ID, year=year, espn_s2=S2, swid=SWID)
+        except Exception:
+            continue
+        for team in league.teams:
+            team_id = int(team.team_id)
+            if 0 <= team_id - 1 < len(OWNERS):
+                owner_name = OWNERS[team_id - 1]
+            else:
+                owner_name = getattr(team, "owner", getattr(team, "team_name", f"Team {team_id}"))
+            team_name = getattr(team, "team_name", f"Team {team_id}")
+            owner_lower = owner_name.strip().lower()
+            if year <= 2020 and owner_lower == "brad":
+                owner_name = "Nick"
+            if year <= 2021 and owner_lower == "thai":
+                owner_name = "Mullins"
+            rows.append({
+                "Year": year,
+                "Owner": owner_name,
+                "Team Name": team_name,
+                "Final Standing": getattr(team, "final_standing", None),
+                "Wins": int(getattr(team, "wins", 0)),
+                "Losses": int(getattr(team, "losses", 0)),
+            })
+    return pd.DataFrame(rows) if rows else pd.DataFrame()
+
+
 def run_survivor(year_df: pd.DataFrame) -> pd.DataFrame:
     pivot = year_df.pivot_table(
         index="Owner", columns="Week", values="Score", fill_value=0
@@ -136,7 +167,7 @@ filtered = valid_scores[
 ]
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4 = st.tabs(["Records & Averages", "All Scores", "Survivor Game", "Charts"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Records & Averages", "All Scores", "Survivor Game", "Charts", "Hall of Fame"])
 
 # ── Tab 1: Records & Averages ─────────────────────────────────────────────────
 with tab1:
@@ -286,3 +317,67 @@ with tab4:
             filtered.sort_values(["Year", "Week", "Owner"]).reset_index(drop=True),
             use_container_width=True,
         )
+
+# ── Tab 5: Hall of Fame ───────────────────────────────────────────────────────
+with tab5:
+    st.header("🏆 Hall of Fame")
+
+    hof_data = load_hof_data()
+
+    if hof_data.empty:
+        st.warning("No Hall of Fame data available.")
+    else:
+        champions = hof_data[hof_data["Final Standing"] == 1].sort_values("Year", ascending=False)
+
+        # ── Champions by year ──
+        st.subheader("League Champions")
+        st.dataframe(
+            champions[["Year", "Owner", "Team Name"]].reset_index(drop=True),
+            use_container_width=True,
+            hide_index=True,
+        )
+
+        st.divider()
+        col1, col2 = st.columns(2)
+
+        # ── Most championships ──
+        with col1:
+            st.subheader("Most Championships")
+            champ_count = (
+                champions.groupby("Owner")
+                .size()
+                .reset_index(name="Championships")
+                .sort_values("Championships", ascending=False)
+            )
+            if not champ_count.empty:
+                top = champ_count.iloc[0]
+                st.metric("Most Rings", top["Owner"], f"{top['Championships']} title(s)")
+            st.dataframe(champ_count, use_container_width=True, hide_index=True)
+
+        # ── Most career regular-season wins ──
+        with col2:
+            st.subheader("Most Career Wins")
+            career_wins = (
+                hof_data.groupby("Owner")["Wins"]
+                .sum()
+                .reset_index()
+                .sort_values("Wins", ascending=False)
+            )
+            if not career_wins.empty:
+                top_wins = career_wins.iloc[0]
+                st.metric("Most Career Wins", top_wins["Owner"], f"{int(top_wins['Wins'])} wins")
+            st.dataframe(career_wins, use_container_width=True, hide_index=True)
+
+        st.divider()
+
+        # ── Never won ──
+        st.subheader("Never Won a Championship")
+        never_won = sorted(set(hof_data["Owner"].unique()) - set(champions["Owner"].unique()))
+        if never_won:
+            st.dataframe(
+                pd.DataFrame({"Owner": never_won}),
+                use_container_width=True,
+                hide_index=True,
+            )
+        else:
+            st.success("Every owner has won at least one championship!")
