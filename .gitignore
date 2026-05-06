@@ -1,0 +1,7 @@
+espnsecrets.py
+__pycache__/
+*.pyc
+*.pem
+all_scores.txt
+*.csv
+.DS_Store
