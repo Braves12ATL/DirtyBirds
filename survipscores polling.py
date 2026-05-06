@@ -1,7 +1,6 @@
-#! /home/scott/scripts/DirtyBirdsApp/dbvenv/bin/python3
+#!/usr/bin/env python3
 
 #import sys
-#sys.path.append('/home/scott/scripts')
 
 import pandas as pd
 import numpy as np

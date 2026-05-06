@@ -157,14 +157,11 @@ for v in w:
 
 
 print(df)
-#df.to_csv('/Users/Scott/Documents/Python_Fantasy/season' + str(season) + 'scores.csv', index=True)
-
 makecsv = input('Export a CSV?') or 'n'
 
 if makecsv  in {'y', 'Y', 'yes', 'YES', 'Yes'}:
 
-        #filename = input('What do you want to name it?')
-        filename = '/Users/Scott/Documents/Python_Fantasy/season' + str(season) + 'scores.csv'
+        filename = 'season' + str(season) + 'scores.csv'
         df.to_csv(filename, index=True)
 
         pd.read_csv(filename).iloc[:, 1:].apply(lambda x: x.replace(r'[^\w\s.]','',regex=True)).to_csv(filename)

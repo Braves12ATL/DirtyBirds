@@ -1,9 +1,4 @@
-#! /home/scott/scripts/DirtyBirdsApp/dbvenv/bin/python3
-
-# Write to file
-##output_file = "/Users/scott/Library/Mobile Documents/com~apple~CloudDocs/Documents/Python_Fantasy/all_scores.txt"
-
-#! /home/scott/scripts/DirtyBirdsApp/dbvenv/bin/python3
+#!/usr/bin/env python3
 
 import pandas as pd
 from espn_api.football import League
@@ -61,7 +56,7 @@ all_years = [year_scores_df(y) for y in YEARS]
 combined = pd.concat(all_years, ignore_index=True) if all_years else pd.DataFrame()
 
 # Write to file
-output_file = "/Users/scott/Library/Mobile Documents/com~apple~CloudDocs/Documents/Python_Fantasy/all_scores.txt"
+output_file = "all_scores.txt"
 with open(output_file, "w", encoding="utf-8") as f:
     if combined.empty:
         f.write("No data found.\n")
