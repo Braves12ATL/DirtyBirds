@@ -8,6 +8,15 @@ SWID = st.secrets["swid"]
 OWNERS = list(st.secrets["owners"])
 
 YEARS = range(2012, 2026)
+NAME_ALIASES = {k: dict(v) for k, v in st.secrets.get("name_aliases", {}).items()}
+
+
+def apply_name_aliases(owner_name: str, year: int) -> str:
+    lower = owner_name.strip().lower()
+    for key, info in NAME_ALIASES.items():
+        if lower == key and year <= info["until_year"]:
+            return info["display"]
+    return owner_name
 
 st.set_page_config(page_title="Fantasy Football Stats", page_icon="🏈", layout="wide")
 st.title("🏈 Fantasy Football League Stats")
@@ -37,11 +46,7 @@ def load_all_scores() -> pd.DataFrame:
 
             team_name = getattr(team, "team_name", f"Team {team_id}")
 
-            owner_lower = owner_name.strip().lower()
-            if year <= 2020 and owner_lower == "brad":
-                owner_name = "Nick"
-            if year <= 2021 and owner_lower == "thai":
-                owner_name = "Mullins"
+            owner_name = apply_name_aliases(owner_name, year)
 
             for week_idx, score in enumerate(team.scores, start=1):
                 rows.append({
@@ -85,11 +90,7 @@ def load_hof_data() -> pd.DataFrame:
             else:
                 owner_name = getattr(team, "owner", getattr(team, "team_name", f"Team {team_id}"))
             team_name = getattr(team, "team_name", f"Team {team_id}")
-            owner_lower = owner_name.strip().lower()
-            if year <= 2020 and owner_lower == "brad":
-                owner_name = "Nick"
-            if year <= 2021 and owner_lower == "thai":
-                owner_name = "Mullins"
+            owner_name = apply_name_aliases(owner_name, year)
             rows.append({
                 "Year": year,
                 "Owner": owner_name,

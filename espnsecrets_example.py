@@ -9,3 +9,9 @@ owners = [
     "Owner2",
     # one entry per team slot, in team ID order
 ]
+
+# Optional: remap ESPN account names to display names for specific year ranges
+# Key is the ESPN account name (lowercase), value has display name and last applicable year
+name_aliases = {
+    # "oldname": {"display": "DisplayName", "until_year": 2020},
+}
